@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Gesture 3D — Holographic Installation</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+    /* Z 0: webcam (mirrored, fullscreen) */
+    #webcam { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      transform: scaleX(-1); z-index: 0; background: #000; }
+    /* Z 1: transparent three.js canvas */
+    #three { position: fixed; inset: 0; width: 100%; height: 100%; display: block;
+      z-index: 1; background: transparent; pointer-events: none; }
+    /* Z 10: UI */
+    #ui { position: fixed; inset: 0; z-index: 10; pointer-events: none; color: #cfeaff; }
+
+    #hud { position: absolute; top: 18px; left: 18px; padding: 10px 14px 10px 12px;
+      border-left: 2px solid rgba(120,210,255,.75); background: linear-gradient(90deg, rgba(4,14,26,.55), rgba(4,14,26,0));
+      backdrop-filter: blur(3px); letter-spacing: .14em; text-transform: uppercase; }
+    #hud .row { display: flex; flex-direction: column; margin: 0 0 9px; }
+    #hud .row:last-child { margin: 0; }
+    #hud .k { font-size: 9px; opacity: .55; }
+    #hud .v { font-size: 13px; color: #eaf8ff; text-shadow: 0 0 8px rgba(110,200,255,.8); }
+    #hud .v[data-state="warn"] { color: #ffd27a; text-shadow: 0 0 8px rgba(255,190,80,.7); }
+    #hud .v[data-state="err"] { color: #ff8f8f; text-shadow: 0 0 8px rgba(255,90,90,.7); }
+
+    #hint { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); font-size: 10px;
+      letter-spacing: .16em; opacity: .38; text-transform: uppercase; white-space: nowrap; }
+
+    #toast { position: absolute; left: 50%; top: 18px; transform: translate(-50%, -10px); max-width: min(560px, 90vw);
+      padding: 9px 14px; font-size: 12px; letter-spacing: .04em; background: rgba(10,18,30,.82);
+      border: 1px solid rgba(255,200,110,.6); color: #ffe2b0; opacity: 0; transition: opacity .3s, transform .3s; }
+    #toast.show { opacity: 1; transform: translate(-50%, 0); }
+    #toast[data-level="error"] { border-color: rgba(255,110,110,.7); color: #ffc4c4; }
+
+    #debug { position: absolute; top: 18px; right: 18px; margin: 0; padding: 10px 12px; min-width: 250px;
+      font-size: 11px; line-height: 1.5; background: rgba(4,12,22,.72); border: 1px solid rgba(120,210,255,.35);
+      color: #bfe6ff; white-space: pre; }
+    #debug[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <video id="webcam" autoplay playsinline muted></video>
+  <canvas id="three"></canvas>
+
+  <div id="ui">
+    <div id="hud">
+      <div class="row"><span class="k">Hand Tracking</span><span class="v" id="hud-track" data-state="warn">Initializing</span></div>
+      <div class="row"><span class="k">Gesture</span><span class="v" id="hud-gesture">—</span></div>
+      <div class="row"><span class="k">Object</span><span class="v" id="hud-object">Butterfly</span></div>
+    </div>
+    <div id="toast"></div>
+    <pre id="debug" hidden></pre>
+    <div id="hint">show your hand to summon &nbsp;|&nbsp; 1 · 2 · 3 object &nbsp;|&nbsp; R reset &nbsp;|&nbsp; H skeleton &nbsp;|&nbsp; D debug</div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
